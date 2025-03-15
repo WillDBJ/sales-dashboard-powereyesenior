@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中老年叶黄素60s销售数据看板</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+        }
+        #dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #4a89dc;
+            color: white;
+            border-radius: 5px;
+        }
+        .chart-container {
+            margin: 15px 0;
+            padding: 15px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .chart-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+            border-left: 4px solid #4a89dc;
+            padding-left: 10px;
+        }
+        .highlight-box {
+            background-color: #fffbeb;
+            border-left: 3px solid #f6b93b;
+            padding: 10px 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .highlight-title {
+            font-weight: bold;
+            color: #e67e22;
+            margin-bottom: 5px;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-gap: 20px;
+        }
+        .full-width {
+            grid-column: 1 / span 2;
+        }
+        .key-metric {
+            display: inline-block;
+            background-color: #4a89dc;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        canvas {
+            width: 100% !important;
+            max-height: 400px;
+        }
+        .platform-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .platform-button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 20px;
+            background-color: #e0e0e0;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .platform-button.active {
+            background-color: #4a89dc;
+            color: white;
+        }
+        .platform-button:hover {
+            opacity: 0.8;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            text-align: center;
+            padding: 10px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .highlight-cell {
+            background-color: #fffbeb;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+            .full-width {
+                grid-column: auto;
+            }
+            table {
+                font-size: 12px;
+            }
+            th, td {
+                padding: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="dashboard">
+        <div class="header">
+            <h1>中老年叶黄素60s销售数据看板</h1>
+            <p>2023年2月 - 2025年3月数据分析</p>
+        </div>
+
+        <div class="highlight-box">
+            <div class="highlight-title">关键销售指标</div>
+            <div>
+                <span class="key-metric">总销量: 7,705件</span>
+                <span class="key-metric">最高单周销量: 389件 (2024年4月3-9日)</span>
+                <span class="key-metric">平均周销量: 74件</span>
+                <span class="key-metric">活跃销售平台: 8个</span>
+            </div>
+        </div>
+
+        <div class="grid-container">
+            <div class="chart-container full-width">
+                <div class="chart-title">年度平台销量分析</div>
+                <div id="yearlyPlatformAnalysis">
+                    <table id="yearlyPlatformTable">
+                        <thead>
+                            <tr>
+                                <th>销售平台</th>
+                                <th>2023年销量</th>
+                                <th>2024年销量</th>
+                                <th>2025年销量</th>
+                                <th>总销量</th>
+                                <th>销量占比</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 将由JavaScript填充 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="chart-container full-width">
+                <div class="chart-title">销售趋势分析</div>
+                <div class="platform-selector">
+                    <button class="platform-button active" data-platform="all">全部平台</button>
+                    <button class="platform-button" data-platform="tmall">天猫</button>
+                    <button class="platform-button" data-platform="jdPOP">京东POP</button>
+                    <button class="platform-button" data-platform="jdSelf">京东自营</button>
+                    <button class="platform-button" data-platform="tdi">TDI</button>
+                    <button class="platform-button" data-platform="pdd">PDD</button>
+                    <button class="platform-button" data-platform="aliHealth">阿里健康</button>
+                    <button class="platform-button" data-platform="vipshop">唯品会</button>
+                    <button class="platform-button" data-platform="midTrans">中外运</button>
+                </div>
+                <canvas id="salesTrendChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-title">平台占比分析</div>
+                <canvas id="platformShareChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-title">销售平台对比</div>
+                <canvas id="platformComparisonChart"></canvas>
+            </div>
+
+            <div class="chart-container full-width">
+                <div class="chart-title">平台销量热力图</div>
+                <canvas id="heatmapChart"></canvas>
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <div class="highlight-title">销售高峰期分析</div>
+            <div>
+                <p><strong>主要销售高峰期:</strong></p>
+                <ul>
+                    <li><strong>2023年11月7-13日:</strong> 京东POP平台销量达182件，总销量325件</li>
+                    <li><strong>2024年2月28-3月5日:</strong> 总销量223件，其中TDI平台145件</li>
+                    <li><strong>2024年3月20-26日:</strong> 总销量308件，其中TDI平台236件</li>
+                    <li><strong>2024年4月3-9日:</strong> 创历史最高周销量389件，其中中外运平台202件</li>
+                    <li><strong>2024年5月22-28日:</strong> 总销量202件，京东自营销量达62件</li>
+                </ul>
+                <p><strong>平台销售高峰:</strong></p>
+                <ul>
+                    <li><strong>天猫:</strong> 2023年11月7-13日(56件)和2024年6月5-11日(53件)</li>
+                    <li><strong>京东POP:</strong> 2023年11月7-13日(182件)</li>
+                    <li><strong>京东自营:</strong> 2024年5月15-21日和5月22-28日(均为62件)</li>
+                    <li><strong>TDI:</strong> 2024年3月20-26日(236件)</li>
+                    <li><strong>PDD:</strong> 2024年4月10-16日(109件)</li>
+                    <li><strong>中外运:</strong> 2024年4月3-9日(202件)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="chart-container full-width">
+            <div class="chart-title">各平台销售波动与趋势分析</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-top: 15px;">
+                <div style="flex: 1; min-width: 300px;">
+                    <h3 style="color: #4a89dc;">销售表现评估</h3>
+                    <p>数据分析显示，该产品在2023年11月和2024年3-6月期间迎来了几次显著的销售高峰。其中，<strong>2024年4月初的销售高峰</strong>尤为突出，主要得益于中外运和PDD平台的强劲表现。</p>
+                    
+                    <p>从平台表现来看:</p>
+                    <ul>
+                        <li><strong>天猫</strong>表现稳定，在产品生命周期中持续贡献销量</li>
+                        <li><strong>京东(自营+POP)</strong>在2023年末至2024年初期间表现强劲</li>
+                        <li><strong>TDI</strong>在2024年2-3月突然崛起，成为阶段性主要销售渠道</li>
+                        <li><strong>PDD</strong>在2024年4月后表现良好，成为稳定的销售渠道</li>
+                        <li><strong>中外运</strong>表现波动较大，但在关键时期贡献显著</li>
+                    </ul>
+                </div>
+                <div style="flex: 1; min-width: 300px;">
+                    <h3 style="color: #4a89dc;">关键洞察</h3>
+                    <p><strong>1. 渠道多元化策略成功</strong> - 产品在多平台同时发力，降低了单一渠道依赖风险</p>
+                    <p><strong>2. 电商大促表现优异</strong> - 产品在2-3月、5-6月和10-11月电商大促期间销量明显提升</p>
+                    <p><strong>3. 新兴平台崛起</strong> - TDI和PDD在产品上市后期表现出色，成为新的增长点</p>
+                    <p><strong>4. 销售周期规律</strong> - 产品在上市一年后实现销量高峰，之后呈现稳定态势</p>
+                    <p><strong>5. 平台定位差异化</strong> - 不同平台面向的消费群体各异，造成销售季节性和促销响应差异</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 保留原始日期格式，不进行修改
+        function getRawDateLabel(dateStr) {
+            return dateStr;
+        }
+
+        // 清理数据中可能的空格
+        function cleanNumber(numStr) {
+            if (typeof numStr === 'string') {
+                return parseInt(numStr.trim());
+            }
+            return numStr;
+        }
+
+        // 提取销售数据
+        const rawData = {
+            dates: ['23 年 2.22-2.28','23 年 3.1-3.7','23 年 3.8-3.15','23 年 3.16-3.22','23 年 3.23-3.29','23 年 3.30-4.12','23 年 4.13-4.19','23 年 4.20-4.26','23 年 4.26-4.30','23 年 5.1-5.9','23 年 5.10-5.16','23 年 5.17-5.23','23 年 5.24-5.30','23 年 5.31-6.6','23 年 6.7-6.13','23 年 6.14-6.20','23 年 6.21-6.30','23 年 7.1-7.10','23 年 7.11-7.17','23 年 7.18-7.24','23 年 7.25-7.31','23 年 8.1-8.7','23 年 8.8-8.15','23 年 8.16-8.21','23 年 8.22-8.28','23 年 8.29-9.4','23 年 9.5-9.11','23 年 9.12-9.18','23 年 9.19-9.26','23 年 9.27-10.9','23 年 10.10-10.17','23 年 10.18-10.24','23 年 10.25-10.31','23 年 11.1-11.2','23 年 11.3-11.6','23 年 11.7-11.13','23 年 11.14-11.20','23 年 11.21-11.28','23 年 11.29-12.4','23 年 12.5-12.11',' 23年 12.12-12.19','23 年 12.19-12.26','23 年12.27-12.31','24 年 1.1-1.4','24 年 1.4-1.9','24 年 1.10-1.16','24 年 1.17-1.24','24 年 1.25-1.30','24 年 1.31-2.6','24 年 2.7-2.20','24 年 2.21-2.27','24 年 2.28-3.5','24 年 3.6-3.12','24 年 3.13-3.19','24 年 3.20-3.26','24 年 3.27-4.2','24 年 4.3-4.9','24 年 4.10-4.16','24 年 4.17-4.23','24 年 4.24-4.30','24 年 5.1-5.7','24 年 5.8-5.14','24 年 5.15-5.21','24 年 5.22-5.28','24 年 5.29-6.4','24 年 6.5-6.11','24 年 6.12-6.18','24 年 6.19-6.25','24 年 6.26-7.2','24 年 7.3-7.9','24 年 7.10-7.16','24 年 7.17-7.23','24 年 7.24-7.30','24 年 7.31-8.6','24 年 8.7-8.13','24 年 8.13-8.20','24 年 8.20-8.27','24 年 8.28-9.3','24 年 9.3-9.10','24 年 9.11-9.17','24 年 9.18-9.24','24 年 9.25-9.30','24 年 10.1-10.8','24 年 10.8-10.15','24 年 10.15-10.22','24 年 10.22-10.29','24 年 10.29-11.5','24 年 11.5-11.12','24 年 11.12-11.19','24 年 11.20-11.26','24 年 11.27-12.3','24 年 12.3-12.10','24 年 12.10-12.17','24 年 12.17-12.24','24 年 12.24-12.31','25 年 1.1-1.7','25 年 1.7-1.14','25 年 1.14-1.21','25 年 1.21-2.4','25 年 2.4-2.11','25 年 2.11-2.18','25 年 2.18-2.25','25 年 2.25-3.4','25 年 3.4-3.11'],
+            tmall: [5,19,13,9,4,10,8,8,4,5,0,4,16,50,2,31,10,1,2,6,5,2,3,11,12,3,4,8,3,26,23,3,30,53,8,56,12,6,52,36,14,11,9,18,13,15,13,37,10,13,13,23,22,22,17,8,4,10,5,22,7,14,25,53,40,27,29,32,16,11,11,9,17,29,15,14,16,8,18,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,14],
+            jdPOP: [0,0,0,0,0,0,0,0,0,0,0,0,5,7,0,0,0,0,0,2,0,2,3,0,0,1,6,3,3,6,1,1,34,13,26,182,2,5,0,2,3,10,1,19,2,11,12,9,4,11,0,8,2,8,16,10,3,10,25,0,16,5,17,9,19,19,17,10,8,6,5,26,11,32,22,10,11,20,19,11,18,7,11,7,25,0,2,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,37],
+            jdSelf: [0,0,0,0,0,0,0,0,0,0,0,0,1,22,11,30,3,10,10,9,5,3,13,7,12,17,12,18,13,15,18,31,15,50,16,54,0,6,7,21,18,35,12,1,0,0,0,0,10,26,33,36,31,26,32,15,10,35,28,18,9,28,49,36,62,62,61,58,16,16,26,3,0,16,0,0,15,10,40,18,2,2,24,26,35,28,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            tdi: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,20,25,145,40,236,76,39,60,73,10,4,11,22,7,20,4,16,18,27,9,20,33,6,6,8,20,10,21,5,5,15,9,6,8,6,6,29,26,17,6,7,7,10,26,0,0,0,0,0,0,0,0,0,0,0],
+            pdd: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,11,36,63,15,109,30,31,32,28,56,30,29,51,31,45,52,34,38,40,34,18,24,11,10,10,19,23,11,20,24,12,20,5,0,2,0,0,0,0,0,0,0,0,0,0,0,0],
+            aliHealth: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1,2,0,1,5,6,11,9,11,17,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            vipshop: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,4,1,2,0,6,11,4,3,3,7,2,5,6,2,9,2,3,9,12,11,8,8,6,1,4,8,2,5,2,2,4,4,5,4,9,3,3,6,7,2,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            midTrans: [7,0,0,24,11,6,1,0,3,2,3,0,17,5,0,6,14,5,54,3,1,0,0,1,11,3,25,20,29,8,13,4,54,9,32,33,17,104,13,27,65,57,13,11,14,31,26,25,7,7,41,6,31,14,20,19,13,13,49,22,5,202,15,27,20,12,8,37,14,7,17,13,30,20,15,5,1,5,30,42,18,5,4,21,4,8,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,36],
+            total: [12,19,13,33,15,16,9,8,7,7,3,4,39,84,13,67,27,16,66,20,11,7,19,19,35,24,47,49,48,55,55,39,133,125,82,325,31,121,72,89,104,114,37,49,35,68,55,74,34,84,114,223,132,308,170,93,97,163,166,142,71,389,154,183,192,181,202,216,94,113,127,106,121,143,119,82,101,72,143,111,61,30,66,83,81,85,53,29,26,12,7,12,26,0,0,0,0,0,1,0,0,0,0,87]
+        };
+
+        // 准备原始日期标签
+        const originalDateLabels = rawData.dates.slice();
+
+        // 计算各平台总销售量
+        function calculatePlatformTotal(platformData) {
+            return platformData.reduce((sum, value) => sum + (cleanNumber(value) || 0), 0);
+        }
+
+        const platformTotals = {
+            '天猫': calculatePlatformTotal(rawData.tmall),
+            '京东POP': calculatePlatformTotal(rawData.jdPOP),
+            '京东自营': calculatePlatformTotal(rawData.jdSelf),
+            'TDI': calculatePlatformTotal(rawData.tdi),
+            'PDD': calculatePlatformTotal(rawData.pdd),
+            '阿里健康': calculatePlatformTotal(rawData.aliHealth),
+            '唯品会': calculatePlatformTotal(rawData.vipshop),
+            '中外运': calculatePlatformTotal(rawData.midTrans)
+        };
+
+        // 计算总销量
+        const grandTotal = Object.values(platformTotals).reduce((sum, value) => sum + value, 0);
+        
+        // 计算平台占比
+        const platformPercentages = {};
+        for (const [platform, total] of Object.entries(platformTotals)) {
+            platformPercentages[platform] = (total / grandTotal * 100).toFixed(1);
+        }
+
+        // 找出每个平台的销售峰值
+        function findPeaks(platformData) {
+            let maxValue = Math.max(...platformData.map(val => cleanNumber(val) || 0));
+            let maxIndex = platformData.indexOf(maxValue.toString());
+            if (maxIndex === -1) {
+                maxIndex = platformData.findIndex(val => cleanNumber(val) === maxValue);
+            }
+            return {
+                value: maxValue,
+                date: originalDateLabels[maxIndex]
+            };
+        }
+
+        const platformPeaks = {
+            '天猫': findPeaks(rawData.tmall),
+            '京东POP': findPeaks(rawData.jdPOP),
+            '京东自营': findPeaks(rawData.jdSelf),
+            'TDI': findPeaks(rawData.tdi),
+            'PDD': findPeaks(rawData.pdd),
+            '阿里健康': findPeaks(rawData.aliHealth),
+            '唯品会': findPeaks(rawData.vipshop),
+            '中外运': findPeaks(rawData.midTrans),
+            '总销量': findPeaks(rawData.total)
+        };
+
+        // 计算年度销售数据
+        function calculateYearlySales() {
+            const platforms = [
+                { name: '天猫', data: rawData.tmall },
+                { name: '京东POP', data: rawData.jdPOP },
+                { name: '京东自营', data: rawData.jdSelf },
+                { name: 'TDI', data: rawData.tdi },
+                { name: 'PDD', data: rawData.pdd },
+                { name: '阿里健康', data: rawData.aliHealth },
+                { name: '唯品会', data: rawData.vipshop },
+                { name: '中外运', data: rawData.midTrans }
+            ];
+            
+            const yearlySales = [];
+            
+            platforms.forEach(platform => {
+                const sales2023 = platform.data.reduce((sum, value, index) => {
+                    if (rawData.dates[index].includes('23 年')) {
+                        return sum + (cleanNumber(value) || 0);
+                    }
+                    return sum;
+                }, 0);
+                
+                const sales2024 = platform.data.reduce((sum, value, index) => {
+                    if (rawData.dates[index].includes('24 年')) {
+                        return sum + (cleanNumber(value) || 0);
+                    }
+                    return sum;
+                }, 0);
+                
+                const sales2025 = platform.data.reduce((sum, value, index) => {
+                    if (rawData.dates[index].includes('25 年')) {
+                        return sum + (cleanNumber(value) || 0);
+                    }
+                    return sum;
+                }, 0);
+                
+                const totalSales = sales2023 + sales2024 + sales2025;
+                const percentage = ((totalSales / grandTotal) * 100).toFixed(1);
+                
+                yearlySales.push({
+                    platform: platform.name,
+                    '2023': sales2023,
+                    '2024': sales2024,
+                    '2025': sales2025,
+                    total: totalSales,
+                    percentage: percentage
+                });
+            });
+            
+            // 添加总计行
+            const totalRow = {
+                platform: '总计',
+                '2023': yearlySales.reduce((sum, row) => sum + row['2023'], 0),
+                '2024': yearlySales.reduce((sum, row) => sum + row['2024'], 0),
+                '2025': yearlySales.reduce((sum, row) => sum + row['2025'], 0),
+                total: yearlySales.reduce((sum, row) => sum + row.total, 0),
+                percentage: '100.0'
+            };
+            
+            yearlySales.push(totalRow);
+            
+            return yearlySales;
+        }
+
+        // 填充年度销售表格
+        function populateYearlySalesTable() {
+            const yearlySales = calculateYearlySales();
+            const tableBody = document.querySelector('#yearlyPlatformTable tbody');
+            
+            yearlySales.forEach(platformData => {
+                const row = document.createElement('tr');
+                
+                // 平台名称
+                const nameCell = document.createElement('td');
+                nameCell.textContent = platformData.platform;
+                if (platformData.platform === '总计') {
+                    nameCell.style.fontWeight = 'bold';
+                    nameCell.style.backgroundColor = '#f2f2f2';
+                }
+                row.appendChild(nameCell);
+                
+                // 2023年销量
+                const sales2023Cell = document.createElement('td');
+                sales2023Cell.textContent = platformData['2023'].toLocaleString();
+                if (platformData.platform === '总计') {
+                    sales2023Cell.style.fontWeight = 'bold';
+                    sales2023Cell.style.backgroundColor = '#f2f2f2';
+                }
+                row.appendChild(sales2023Cell);
+                
+                // 2024年销量
+                const sales2024Cell = document.createElement('td');
+                sales2024Cell.textContent = platformData['2024'].toLocaleString();
+                if (platformData.platform === '总计') {
+                    sales2024Cell.style.fontWeight = 'bold';
+                    sales2024Cell.style.backgroundColor = '#f2f2f2';
+                }
+                row.appendChild(sales2024Cell);
+                
+                // 2025年销量
+                const sales2025Cell = document.createElement('td');
+                sales2025Cell.textContent = platformData['2025'].toLocaleString();
+                if (platformData.platform === '总计') {
+                    sales2025Cell.style.fontWeight = 'bold';
+                    sales2025Cell.style.backgroundColor = '#f2f2f2';
+                }
+                row.appendChild(sales2025Cell);
+                
+                // 总销量
+                const totalCell = document.createElement('td');
+                totalCell.textContent = platformData.total.toLocaleString();
+                totalCell.classList.add('highlight-cell');
+                if (platformData.platform === '总计') {
+                    totalCell.style.fontWeight = 'bold';
+                    totalCell.style.backgroundColor = '#f2f2f2';
+                }
+                row.appendChild(totalCell);
+                
+                // 销量占比
+                const percentageCell = document.createElement('td');
+                percentageCell.textContent = platformData.percentage + '%';
+                percentageCell.classList.add('highlight-cell');
+                if (platformData.platform === '总计') {
+                    percentageCell.style.fontWeight = 'bold';
+                    percentageCell.style.backgroundColor = '#f2f2f2';
+                }
+                row.appendChild(percentageCell);
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        // 销售趋势图（支持选择平台）- 使用原始日期标签
+        let salesTrendChart;
+        function createSalesTrendChart(platform = 'all') {
+            const ctx = document.getElementById('salesTrendChart');
+            
+            // 如果图表已存在，先销毁
+            if (salesTrendChart) {
+                salesTrendChart.destroy();
+            }
+            
+            // 准备数据
+            let data;
+            let label;
+            let color;
+            
+            if (platform === 'all') {
+                data = rawData.total.map(val => cleanNumber(val) || 0);
+                label = '全部平台';
+                color = '#4a89dc';
+            } else {
+                const platformMap = {
+                    'tmall': {data: rawData.tmall, label: '天猫', color: '#ff6b6b'},
+                    'jdPOP': {data: rawData.jdPOP, label: '京东POP', color: '#54a0ff'},
+                    'jdSelf': {data: rawData.jdSelf, label: '京东自营', color: '#5f27cd'},
+                    'tdi': {data: rawData.tdi, label: 'TDI', color: '#10ac84'},
+                    'pdd': {data: rawData.pdd, label: 'PDD', color: '#ff9f43'},
+                    'aliHealth': {data: rawData.aliHealth, label: '阿里健康', color: '#00d2d3'},
+                    'vipshop': {data: rawData.vipshop, label: '唯品会', color: '#8395a7'},
+                    'midTrans': {data: rawData.midTrans, label: '中外运', color: '#222f3e'}
+                };
+                
+                data = platformMap[platform].data.map(val => cleanNumber(val) || 0);
+                label = platformMap[platform].label;
+                color = platformMap[platform].color;
+            }
+            
+            // 创建图表
+            salesTrendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: originalDateLabels,
+                    datasets: [{
+                        label: label,
+                        data: data,
+                        borderColor: color,
+                        backgroundColor: `${color}33`,
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.2,
+                        pointRadius: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                title: function(context) {
+                                    // 直接使用原始日期标签
+                                    return originalDateLabels[context[0].dataIndex];
+                                },
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.parsed.y}件`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            // 使用原始日期标签
+                            type: 'category',
+                            ticks: {
+                                callback: function(value, index) {
+                                    // 每5个点显示一个标签
+                                    return index % 5 === 0 ? originalDateLabels[index] : '';
+                                },
+                                maxRotation: 45,
+                                minRotation: 45,
+                                autoSkip: false,
+                                font: {
+                                    size: 10
+                                }
+                            },
+                            grid: {
+                                display: true,
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: '销量 (件)'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 平台占比饼图 - 添加百分比显示在图表上
+        const platformShareChart = new Chart(
+            document.getElementById('platformShareChart'),
+            {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(platformTotals),
+                    datasets: [{
+                        data: Object.values(platformTotals),
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(153, 102, 255, 0.7)',
+                            'rgba(255, 159, 64, 0.7)',
+                            'rgba(199, 199, 199, 0.7)',
+                            'rgba(83, 102, 255, 0.7)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value}件 (${percentage}%)`;
+                                }
+                            }
+                        },
+                        datalabels: {
+                            formatter: (value, ctx) => {
+                                const sum = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / sum) * 100);
+                                return percentage + '%';
+                            },
+                            color: '#fff',
+                            font: {
+                                weight: 'bold',
+                                size: 12
+                            }
+                        }
+                    }
+                },
+                plugins: [{
+                    id: 'customLabels',
+                    afterDraw: function(chart) {
+                        const ctx = chart.ctx;
+                        ctx.save();
+                        const data = chart.data.datasets[0].data;
+                        const total = data.reduce((a, b) => a + b, 0);
+                        let centerX = (chart.chartArea.left + chart.chartArea.right) / 2;
+                        let centerY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
+                        let radius = (chart.chartArea.right - chart.chartArea.left) / 4;
+
+                        // 绘制每个扇形的百分比标签
+                        let startAngle = -Math.PI / 2; // 从顶部开始
+                        data.forEach((value, i) => {
+                            const percentage = Math.round((value / total) * 100);
+                            const slice = (value / total) * (Math.PI * 2);
+                            const midAngle = startAngle + slice / 2;
+                            const x = centerX + Math.cos(midAngle) * (radius * 0.7);
+                            const y = centerY + Math.sin(midAngle) * (radius * 0.7);
+                            
+                            ctx.font = 'bold 12px Arial';
+                            ctx.fillStyle = '#fff';
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'middle';
+                            if (percentage > 5) { // 只显示较大的百分比
+                                ctx.fillText(percentage + '%', x, y);
+                            }
+                            startAngle += slice;
+                        });
+                        ctx.restore();
+                    }
+                }]
+            }
+        );
+
+        // 平台销量对比柱状图 - 添加数值和百分比显示
+        const platformComparisonChart = new Chart(
+            document.getElementById('platformComparisonChart'),
+            {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(platformTotals),
+                    datasets: [{
+                        label: '总销量',
+                        data: Object.values(platformTotals),
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(153, 102, 255, 0.7)',
+                            'rgba(255, 159, 64, 0.7)',
+                            'rgba(199, 199, 199, 0.7)',
+                            'rgba(83, 102, 255, 0.7)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                afterLabel: function(context) {
+                                    const platform = context.label;
+                                    return `最高销量: ${platformPeaks[platform].value}件 (${platformPeaks[platform].date})`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: '销量 (件)'
+                            }
+                        }
+                    }
+                },
+                plugins: [{
+                    id: 'barLabels',
+                    afterDraw: function(chart) {
+                        const ctx = chart.ctx;
+                        const data = chart.data.datasets[0].data;
+                        const total = data.reduce((a, b) => a + b, 0);
+
+                        chart.data.datasets.forEach((dataset, i) => {
+                            const meta = chart.getDatasetMeta(i);
+                            meta.data.forEach((bar, index) => {
+                                const value = dataset.data[index];
+                                const percentage = Math.round((value / total) * 100);
+                                const position = bar.getCenterPoint();
+                                
+                                // 绘制销量
+                                ctx.fillStyle = '#000';
+                                ctx.textAlign = 'left';
+                                ctx.textBaseline = 'middle';
+                                ctx.font = 'bold 12px Arial';
+                                ctx.fillText(value, position.x + 10, position.y - 10);
+                                
+                                // 绘制百分比
+                                ctx.fillStyle = '#666';
+                                ctx.font = '11px Arial';
+                                ctx.fillText(`(${percentage}%)`, position.x + 10, position.y + 10);
+                            });
+                        });
+                    }
+                }]
+            }
+        );
+
+        // 创建热力图数据 - 使用原始日期标签
+        function createHeatmapData() {
+            const platforms = ['天猫', '京东POP', '京东自营', 'TDI', 'PDD', '阿里健康', '唯品会', '中外运'];
+            const platformData = [
+                rawData.tmall,
+                rawData.jdPOP,
+                rawData.jdSelf,
+                rawData.tdi,
+                rawData.pdd,
+                rawData.aliHealth,
+                rawData.vipshop,
+                rawData.midTrans
+            ];
+            
+            // 使用原先的采样间隔
+            const reducedIndices = [];
+            for (let i = 0; i < originalDateLabels.length; i += 4) {
+                reducedIndices.push(i);
+            }
+            
+            const datasets = platforms.map((platform, index) => {
+                return {
+                    label: platform,
+                    data: reducedIndices.map(i => ({
+                        x: originalDateLabels[i],
+                        y: platform,
+                        v: cleanNumber(platformData[index][i]) || 0
+                    })),
+                    backgroundColor: function(context) {
+                        const value = context.raw?.v || 0;
+                        const alpha = Math.min(value / 100, 1);
+                        return `rgba(74, 137, 220, ${alpha})`;
+                    },
+                    borderColor: 'white',
+                    borderWidth: 1,
+                    hoverBackgroundColor: 'rgba(255, 99, 132, 0.6)'
+                };
+            });
+            
+            return {
+                datasets: datasets.flat()
+            };
+        }
+
+        const heatmapChart = new Chart(
+            document.getElementById('heatmapChart'),
+            {
+                type: 'scatter',
+                data: createHeatmapData(),
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                title: function(context) {
+                                    // 使用原始日期标签
+                                    return context[0].raw.x;
+                                },
+                                label: function(context) {
+                                    const point = context.raw;
+                                    return `${point.y}: ${point.v}件`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'category',
+                            // 热力图X轴显示改进
+                            labels: originalDateLabels.filter((_, i) => i % 4 === 0),
+                            ticks: {
+                                autoSkip: false,
+                                maxRotation: 45,
+                                minRotation: 45,
+                                font: {
+                                    size: 9
+                                }
+                            },
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            type: 'category',
+                            labels: ['天猫', '京东POP', '京东自营', 'TDI', 'PDD', '阿里健康', '唯品会', '中外运'],
+                            position: 'left',
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    elements: {
+                        point: {
+                            radius: function(context) {
+                                const value = context.raw?.v || 0;
+                                return Math.max(value / 10, 3);
+                            }
+                        }
+                    }
+                }
+            }
+        );
+
+        // 绑定平台选择器事件
+        document.querySelectorAll('.platform-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const platform = this.getAttribute('data-platform');
+                
+                // 更新按钮状态
+                document.querySelectorAll('.platform-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // 更新图表
+                createSalesTrendChart(platform);
+            });
+        });
+
+        // 初始化销售趋势图表和年度销售表格
+        createSalesTrendChart('all');
+        populateYearlySalesTable();
+    </script>
+</body>
+</html>
